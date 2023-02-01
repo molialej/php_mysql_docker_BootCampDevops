@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   db: 
     image: mysql:latest
@@ -26,12 +26,22 @@ services:
       - PMA_HOST=db
       - PMA_PORT=3306
   jenkins:
-    container_name: jenkins
+    image: jenkins/jenkins:lts
     privileged: true
     user: root
-    image: jenkins:2.60.3
     ports:
-     - "8085:8080"
+     - "8080:8080"
+     - "50000:50000"
+    container_name: jenkins
     volumes:
+     - /home/${myname}/jenkins_compose/jenkins_configuration:/var/jenkins_home
      - /var/run/docker.sock:/var/run/docker.sock
-     - /usr/local/bin/docker:/usr/local/bin/docker
+  agent:
+    image: jenkins/ssh-agent:jdk11
+    privileged: true
+    user: root
+    container_name: agent
+    expose:
+      - 22
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC9XE1yhO2JEQkA3oqus3c/VEHMgFisFKw0rv1J1i1LBVis3Fc58pQR2pL1d4V+n7m1lLdWgSRsd/tfCG4ZmuycQz+iNGJj2rFWmqEFIeNyFmwdLPyJYat8W8viz3k1OOCmkBslPvP93x6P622apBT6ztjfHmxUO7w051pq1MA9uYcypUvhCVFZ/Z3tqio+q1L7LLnYHY+zpuenCC8dhyl7QEywPkD8sQMC3wEZPZAyLgA0RKpe/r/ILG7AVyVGai8I3fR6togJ0d4I+lqazNCcADPV/+zxfjkiUMLV3XoMp5ojQObTn/oEZVKmuDSLwSJ9bmqXWsPgoJMAG6kjZ24d+5QBGFXqBXWhJ5i59gXqnf8WJQVY3Q3bjRLpy8RMRxDoRPLUIu7IP9Vk1kJQS9OpdZdIxWtL8wBMXZEosJELpqc/0GkJnep52cLjDGivzkzxKYO77RP/R8/pBPS7/n3kvJAcFtxJ/G8Jt2suief/MRn/R8Mrrh75XTcM69ekLFs= molialej@GeekHubs-pc5
